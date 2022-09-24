@@ -1,5 +1,7 @@
 # `go.b8s.dev/primarykey`
 
+[![Go Report Card](https://goreportcard.com/badge/go.b8s.dev/primarykey)](https://goreportcard.com/report/go.b8s.dev/primarykey)
+
 The goal with `primarykey` is to provide a bridge between
 [`github.com/google/uuid`][0] and [`github.com/lithammer/shortuuid`][1] while also
 supporting database interfaces so they can continue to be used as column types
