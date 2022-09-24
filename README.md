@@ -1,5 +1,6 @@
 # `go.b8s.dev/primarykey`
 
+[![Test Suite](https://github.com/blackieops/primarykey/actions/workflows/tests.yml/badge.svg)](https://github.com/blackieops/primarykey/actions/workflows/tests.yml)
 [![Go Report Card](https://goreportcard.com/badge/go.b8s.dev/primarykey)](https://goreportcard.com/report/go.b8s.dev/primarykey)
 
 The goal with `primarykey` is to provide a bridge between
