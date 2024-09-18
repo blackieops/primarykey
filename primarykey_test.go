@@ -1,6 +1,9 @@
 package primarykey
 
-import "testing"
+import (
+	"encoding/json"
+	"testing"
+)
 
 var testUUIDBytes = []byte{
 	0x7d, 0x44, 0x48, 0x40,
@@ -133,5 +136,38 @@ func TestNew(t *testing.T) {
 
 	if len(id) != 16 {
 		t.Errorf("New() gave weird output: %v", id)
+	}
+}
+
+func TestUnmarshalJSON(t *testing.T) {
+	type model struct {
+		ID ID
+	}
+	src := `{"ID": "gXeZJmzG3xwqWdJeumvbFy"}`
+
+	var m *model
+	if err := json.Unmarshal([]byte(src), &m); err != nil {
+		t.Fatalf("Failed to unmarshal ID from json: %v", err)
+	}
+
+	if m.ID.String() != "gXeZJmzG3xwqWdJeumvbFy" {
+		t.Fatalf("Got unexpected ID value: %s", m.ID)
+	}
+}
+
+func TestMarshalJSON(t *testing.T) {
+	type model struct {
+		ID ID
+	}
+
+	m := &model{ID: MustDecode("gXeZJmzG3xwqWdJeumvbFy")}
+
+	b, err := json.Marshal(m)
+	if err != nil {
+		t.Fatalf("Failed to unmarshal ID from json: %v", err)
+	}
+
+	if string(b) != `{"ID":"gXeZJmzG3xwqWdJeumvbFy"}` {
+		t.Fatalf("Got unexpected JSON marshaled: %s", string(b))
 	}
 }

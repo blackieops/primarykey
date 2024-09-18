@@ -2,6 +2,7 @@ package primarykey
 
 import (
 	"database/sql/driver"
+	"encoding/json"
 
 	"github.com/google/uuid"
 	"github.com/lithammer/shortuuid/v4"
@@ -40,6 +41,27 @@ func (i *ID) Scan(src interface{}) error {
 // a value that can be stored by a database driver.
 func (i ID) Value() (driver.Value, error) {
 	return i.UUID().String(), nil
+}
+
+// MarshalJSON satisfies the [encoding/json.Marshaler] interface so IDs get
+// serialized to JSON in their short string form automatically.
+func (i ID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(i.String())
+}
+
+// UnmarshalJSON satisfies the [encoding/json.Unmarshaler] interface so the
+// stringified IDs get decoded into [ID] structs automatically.
+func (i *ID) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+	v, err := Decode(s)
+	if err != nil {
+		return err
+	}
+	*i = v
+	return nil
 }
 
 // Decode parses the string as a shortuuid into an `ID`.
