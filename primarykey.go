@@ -96,6 +96,7 @@ func Empty() ID {
 	return [16]byte{}
 }
 
+// FromBytes initializes an [ID] from a UUID byte slice.
 func FromBytes(b []byte) (ID, error) {
 	uid, err := uuid.FromBytes(b)
 	if err != nil {
