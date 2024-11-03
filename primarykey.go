@@ -93,7 +93,7 @@ func New() ID {
 
 // Empty returns a "valid", but zeroed-out UUID.
 func Empty() ID {
-	return [16]byte{}
+	return ID{}
 }
 
 // FromBytes initializes an [ID] from a UUID byte slice.
