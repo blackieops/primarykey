@@ -3,16 +3,17 @@
 [![Test Suite](https://github.com/blackieops/primarykey/actions/workflows/tests.yml/badge.svg)](https://github.com/blackieops/primarykey/actions/workflows/tests.yml)
 [![Go Report Card](https://goreportcard.com/badge/go.b8s.dev/primarykey)](https://goreportcard.com/report/go.b8s.dev/primarykey)
 
-The goal with `primarykey` is to provide a bridge between
-[`github.com/google/uuid`][0] and [`github.com/lithammer/shortuuid`][1] while also
-supporting database interfaces so they can continue to be used as column types
-in things like [`gorm.io/gorm`][2].
+`primarykey` is a replacement for UUID primary keys in your database-driven Go
+programs. `primarykey` utilises the [`shortuuid`][1] library to generate
+binary-compatible UUIDs in a more human-friendly format, allowing you to still
+benefit from native UUID storage in systems like PostgreSQL but while providing
+less obnoxious IDs to your users.
+
+[1]: https://github.com/lithammer/shortuuid
 
 ## Usage
 
-The `primarykey.ID` type is byte-compatible with UUIDs, and provides all the
-interfaces required to be used as a database column type. For example, if you
-have a [gorm][2] model:
+Use `primarykey.ID` for your ID fields in your model structs:
 
 ```go
 import "go.b8s.dev/primarykey"
@@ -22,30 +23,41 @@ type MyModel struct {
 }
 ```
 
+The ID will be passed to the datastore as a regular binary UUID (eg., `uuid` in
+PostgreSQL).
+
+You can pass primarykeys directly into queries:
+
+```go
+db.Query("SELECT * FROM my_model WHERE id = $1", myModel.ID)
+```
+
+And marshal them to serializable formats like JSON automatically:
+
+```go
+b, _ := json.Marshal(&MyModel{ID: primarykey.New()})
+//=> {"ID":"KwSysDpxcBU9FNhGkn2dCf"}
+```
+
 There is also a public interface to encode and decode directly:
 
 ```go
 newOne := primarykey.New()
-Encode(newOne) //=> "KwSysDpxcBU9FNhGkn2dCf"
+primarykey.Encode(newOne) //=> "KwSysDpxcBU9FNhGkn2dCf"
 
-id := Decode("KwSysDpxcBU9FNhGkn2dCf") //=> ID
+id := primarykey.Decode("KwSysDpxcBU9FNhGkn2dCf") //=> ID
 id.UUID() //=> uuid.UUID
 id.String() //=> "KwSysDpxcBU9FNhGkn2dCf"
 ```
+
 
 ## Development
 
 This is a very standard Go project with very minimal dependencies and no
 required setup. Dependencies are vendored.
 
-To run the test suite,
+To run the test suite:
 
 ```
 $ go test .
 ```
-
-That's about it.
-
-[0]: https://github.com/google/uuid
-[1]: https://github.com/lithammer/shortuuid
-[2]: https://gorm.io/gorm
